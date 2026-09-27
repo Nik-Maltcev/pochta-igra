@@ -2,185 +2,32 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#f7ecdc">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#142d35">
 <title>Parcel Panic! — Mail Warehouse Puzzle</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
-<style>
-  :root{
-    --bg:#f7ecdc; --panel:#fffdf7; --ink:#4a3b2a; --ink-soft:#8a7a63;
-    --teal:#2fa8a0; --teal-d:#1f7d77; --gold:#f4b942; --red:#e05656;
-    --shelf:#efe3cb; --shelf-line:#dcc9a4;
-  }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{height:100%;}
-  body{
-    margin:0; background:
-      radial-gradient(circle at 12% 18%, rgba(47,168,160,.08) 0 22px, transparent 23px),
-      radial-gradient(circle at 88% 30%, rgba(244,185,66,.10) 0 26px, transparent 27px),
-      radial-gradient(circle at 20% 85%, rgba(224,86,86,.07) 0 24px, transparent 25px),
-      var(--bg);
-    color:var(--ink); font-family:"Trebuchet MS","Segoe UI",Verdana,sans-serif;
-    display:flex; justify-content:center; user-select:none; touch-action:manipulation;
-  }
-  #wrap{width:100%; max-width:500px; min-height:100%; display:flex; flex-direction:column; padding:10px 12px 20px;}
-  .screen{display:none; flex-direction:column; flex:1;}
-  .screen.active{display:flex;}
-
-  /* ---------- title ---------- */
-  #logo{margin:42px 0 6px; text-align:center; position:relative;}
-  #logo h1{
-    margin:0; font-size:52px; line-height:.95; letter-spacing:1px; color:var(--ink);
-    text-shadow:0 3px 0 #fff, 0 5px 12px rgba(74,59,42,.18);
-  }
-  #logo h1 em{font-style:normal; color:var(--teal);}
-  .tape{
-    position:absolute; width:86px; height:24px; background:rgba(47,168,160,.55);
-    border-left:2px dashed rgba(255,255,255,.7); border-right:2px dashed rgba(255,255,255,.7);
-  }
-  .tape.t1{top:-14px; left:8%; transform:rotate(-14deg);}
-  .tape.t2{bottom:-12px; right:10%; transform:rotate(12deg);}
-  #tagline{text-align:center; color:var(--ink-soft); font-weight:bold; letter-spacing:2px; text-transform:uppercase; font-size:12px; margin-bottom:6px;}
-  #floaters{position:relative; height:110px; overflow:hidden; margin:6px 0;}
-  .drift{position:absolute; width:54px; height:66px; opacity:.9; animation:drift 7s ease-in-out infinite;}
-  .drift svg{width:100%; height:100%;}
-  @keyframes drift{0%,100%{transform:translateY(0) rotate(-6deg);}50%{transform:translateY(-14px) rotate(6deg);}}
-  .btn{
-    display:block; width:100%; border:0; border-radius:16px; padding:16px; margin:8px 0;
-    font:inherit; font-size:20px; font-weight:900; letter-spacing:1px; color:#fff; cursor:pointer;
-    background:linear-gradient(180deg,var(--teal),var(--teal-d));
-    box-shadow:0 4px 0 var(--teal-d), 0 8px 18px rgba(31,125,119,.35); transition:transform .08s;
-  }
-  .btn:active{transform:translateY(3px); box-shadow:0 1px 0 var(--teal-d);}
-  .btn.ghost{background:var(--panel); color:var(--ink); box-shadow:0 3px 0 #e3d7c0, 0 6px 14px rgba(74,59,42,.12);}
-  #best-chip{align-self:center; margin:6px 0 14px; background:var(--gold); color:#5c4200; font-weight:900;
-    padding:6px 16px; border-radius:999px; box-shadow:0 2px 0 #cf9a25;}
-  details{background:var(--panel); border-radius:14px; padding:12px 16px; margin-top:10px; box-shadow:0 3px 10px rgba(74,59,42,.08);}
-  summary{font-weight:900; cursor:pointer; color:var(--teal-d);}
-  details li{margin:7px 0; font-size:14px; line-height:1.35;}
-  .foot{margin-top:auto; text-align:center; color:var(--ink-soft); font-size:11px; padding-top:14px;}
-
-  /* ---------- HUD ---------- */
-  #hud{display:flex; gap:8px; align-items:center; margin-bottom:8px;}
-  .chip{background:var(--panel); border-radius:12px; padding:7px 12px; font-weight:900; font-size:15px;
-    box-shadow:0 2px 0 #e3d7c0; white-space:nowrap;}
-  .chip small{font-size:10px; color:var(--ink-soft); display:block; letter-spacing:1px;}
-  .chip.grow{flex:1;}
-  .icobtn{width:40px; height:40px; border:0; border-radius:12px; background:var(--panel); font-size:17px;
-    box-shadow:0 2px 0 #e3d7c0; cursor:pointer; flex:none;}
-  .icobtn:active{transform:translateY(2px); box-shadow:none;}
-
-  /* ---------- goals ---------- */
-  #goals{display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;}
-  .goal{flex:1 1 30%; display:flex; align-items:center; gap:6px; background:var(--panel); border-radius:10px;
-    padding:6px 8px; font-size:11.5px; font-weight:bold; box-shadow:0 2px 0 #e3d7c0; line-height:1.15; min-width:0;}
-  .goal .g-prog{margin-left:auto; background:#efe3cb; border-radius:8px; padding:2px 7px; font-size:11px; flex:none;}
-  .goal.done{background:#e2f4ee; color:var(--teal-d);}
-  .goal.done .g-prog{background:var(--teal); color:#fff;}
-
-  /* ---------- grid ---------- */
-  #grid{display:grid; grid-template-columns:repeat(4,1fr); gap:8px;}
-  .cell{
-    position:relative; aspect-ratio:1; border-radius:12px; background:var(--shelf);
-    box-shadow:inset 0 2px 6px rgba(74,59,42,.14), inset 0 -2px 0 rgba(255,255,255,.5);
-    cursor:pointer;
-  }
-  .cell .slot{position:absolute; inset:7px; border:2px dashed var(--shelf-line); border-radius:9px; pointer-events:none;}
-  .cell:hover .slot{border-color:var(--teal);}
-  .cell.has-card{cursor:default;}
-  .cell.shake{animation:cellshake .3s;}
-  @keyframes cellshake{25%{transform:translateX(-3px);}75%{transform:translateX(3px);}}
-  .cell.in-seal{background:#f6e3b4;}
-  .cell .parcel{position:absolute; inset:9%; pointer-events:none; z-index:5;}
-  .cell .parcel svg{width:100%; height:100%; filter:drop-shadow(0 2px 2px rgba(74,59,42,.25));}
-  .cell.pop .parcel{animation:pop .25s;}
-  @keyframes pop{0%{transform:scale(.55);}70%{transform:scale(1.08);}100%{transform:scale(1);}}
-  .tape-h::after,.tape-v::after{
-    content:''; position:absolute; z-index:20; pointer-events:none;
-    background:repeating-linear-gradient(45deg, rgba(47,168,160,.82) 0 9px, rgba(24,131,125,.72) 9px 18px);
-    box-shadow:0 1px 4px rgba(0,0,0,.28); border-left:2px dashed rgba(255,255,255,.65); border-right:2px dashed rgba(255,255,255,.65);
-  }
-  .tape-h::after{left:-5px; right:-5px; top:50%; height:13px; transform:translateY(-50%);}
-  .tape-v::after{top:-5px; bottom:-5px; left:50%; width:13px; transform:translateX(-50%);}
-  .patch-badge{
-    position:absolute; top:3px; right:3px; z-index:21; width:20px; height:20px; border-radius:50%;
-    background:var(--gold); color:#5c4200; font-size:12px; font-weight:900;
-    display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,.3); pointer-events:none;
-  }
-  .mouse{position:absolute; left:8%; right:8%; bottom:-2px; height:52%; z-index:8; pointer-events:none;}
-  .mouse svg{width:100%; height:100%;}
-  .mouse.wiggle{animation:wig .5s infinite;}
-  .mouse.hungry{animation:hungry .35s infinite;}
-  @keyframes wig{0%,100%{transform:translateX(0);}50%{transform:translateX(-4px);}}
-  @keyframes hungry{0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-5px) rotate(-7deg);}}
-  .float{
-    position:absolute; left:50%; top:8%; transform:translateX(-50%); z-index:40; pointer-events:none;
-    font-weight:900; font-size:16px; color:var(--teal-d); text-shadow:0 2px 0 #fff;
-    animation:rise 1.05s forwards; white-space:nowrap;
-  }
-  .float.bad{color:var(--red);}
-  .float.mouse{color:#c2427a;}
-  @keyframes rise{0%{opacity:0; transform:translate(-50%,8px) scale(.7);}20%{opacity:1; transform:translate(-50%,-6px) scale(1.1);}100%{opacity:0; transform:translate(-50%,-44px) scale(1);}}
-
-  /* ---------- banner ---------- */
-  #banner{
-    position:fixed; top:12%; left:50%; transform:translate(-50%,-16px) scale(.9); z-index:60;
-    background:var(--teal); color:#fff; font-weight:900; font-size:18px; letter-spacing:.5px;
-    padding:10px 22px; border-radius:999px; box-shadow:0 6px 18px rgba(31,125,119,.4);
-    opacity:0; pointer-events:none; transition:all .18s; text-align:center; max-width:88vw;
-  }
-  #banner.show{opacity:1; transform:translate(-50%,0) scale(1);}
-  #banner.gold{background:var(--gold); color:#5c4200; box-shadow:0 6px 18px rgba(207,154,37,.45);}
-  #banner.bad{background:var(--red); box-shadow:0 6px 18px rgba(224,86,86,.4);}
-
-  /* ---------- hand ---------- */
-  #hand{display:flex; gap:10px; justify-content:center; margin-top:12px; min-height:118px;}
-  .card{
-    width:31%; max-width:120px; aspect-ratio:3/4; background:var(--panel); border-radius:13px; cursor:pointer;
-    box-shadow:0 3px 0 #e3d7c0, 0 8px 16px rgba(74,59,42,.14); position:relative;
-    display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8px 4px 6px;
-    transition:transform .12s, box-shadow .12s; border-top:6px solid #ccc;
-  }
-  .card svg{width:72%; flex:1;}
-  .card span{font-size:10.5px; font-weight:900; letter-spacing:1.5px; color:var(--ink-soft); margin-top:3px;}
-  .card .corner{position:absolute; top:5px; right:5px; width:14px; height:14px; border-radius:3px; opacity:.85;}
-  .card:hover{transform:translateY(-6px);}
-  .card.sel{transform:translateY(-12px); box-shadow:0 0 0 3px var(--teal), 0 12px 20px rgba(31,125,119,.35);}
-  .card.sel::after{
-    content:'▼'; position:absolute; bottom:-19px; left:50%; transform:translateX(-50%); color:var(--teal); font-size:13px;
-  }
-  .card.empty{background:transparent; border:2px dashed var(--shelf-line); box-shadow:none; cursor:default;}
-  .t-box{border-top-color:#c8935a;} .t-tube{border-top-color:#5b9bd5;} .t-env{border-top-color:#e3b74f;}
-  .t-sack{border-top-color:#7fae5f;} .t-crate{border-top-color:#d9834f;} .t-basket{border-top-color:#a06cc9;}
-
-  /* ---------- end screen ---------- */
-  #end-box{background:var(--panel); border-radius:18px; padding:22px; margin-top:18px; box-shadow:0 6px 20px rgba(74,59,42,.12);}
-  #end-total{text-align:center; font-size:54px; font-weight:900; color:var(--teal-d); line-height:1;}
-  #end-label{text-align:center; color:var(--ink-soft); font-weight:900; letter-spacing:2px; font-size:12px; margin:2px 0 14px;}
-  #newbest{display:none; text-align:center; margin:0 0 10px; color:#fff; background:var(--gold); border-radius:999px;
-    padding:6px; font-weight:900; box-shadow:0 2px 0 #cf9a25;}
-  .row{display:flex; justify-content:space-between; font-size:15px; padding:6px 2px; border-bottom:1px dashed #e8dcc5;}
-  .row b{font-variant-numeric:tabular-nums;}
-  .row.total{border:0; font-size:17px; margin-top:4px;}
-  .row .neg{color:var(--red);}
-  @media (max-height:700px){ #logo{margin-top:14px;} #floaters{display:none;} }
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div id="wrap">
 
   <!-- ================= TITLE ================= -->
   <section id="screen-title" class="screen active">
-    <div id="logo">
-      <div class="tape t1"></div><div class="tape t2"></div>
-      <h1>PARCEL<br><em>PANIC!</em></h1>
+    <div class="title-top"><span class="brand-mark">✦ POSTAL ARCADE</span><button type="button" class="stamp-top" id="btn-stamps">✦ STAMP BOOK <strong id="stamp-count">0/5</strong></button></div>
+    <div class="title-main">
+      <div class="title-copy">
+        <div class="eyebrow">A LITTLE WAREHOUSE. A LOT OF CHAOS.</div>
+        <div id="logo"><h1>PARCEL<br><em>PANIC!</em></h1></div>
+        <div id="tagline">Sort parcels. Seal shelves. Outsmart the mice.</div>
+        <div class="title-actions">
+          <button class="btn" id="btn-play">START SHIFT <span aria-hidden="true">↗</span></button>
+          <div id="best-chip">★ PERSONAL BEST <strong id="best-title">0</strong></div>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><div class="hero-ring"></div><div class="hero-floor"></div><div id="floaters"></div><div class="hero-stamp">SORTED<br><b>WITH CARE</b></div></div>
     </div>
-    <div id="tagline">the cozy mail warehouse puzzle</div>
-    <div id="floaters"></div>
-    <div id="best-chip">BEST: <span id="best-title">0</span></div>
-    <button class="btn" id="btn-play">▶&nbsp; PLAY</button>
     <details>
-      <summary>How to play</summary>
+      <summary>HOW TO PLAY <span>＋</span></summary>
       <ul>
         <li>📦 Tap a parcel card below, then tap a shelf slot to deliver it.</li>
         <li>🩹 Fill a full row or column with <b>4 different</b> parcels to <b>seal</b> it with tape: <b>+10</b>.</li>
@@ -188,39 +35,53 @@
         <li>🐭 Mice sneak in — deliver a parcel <b>onto a mouse</b> to catch it: <b>+5</b>. Hungry mice chew your parcels! Loose mice cost <b>−5</b> at the end.</li>
         <li>📮 Seal a row and a column with one parcel = <b>Double Seal</b>, +10 bonus.</li>
         <li>🎯 Complete the 3 goals for extra points. 16 parcels, then the shift is over!</li>
+        <li>🔥 Score on consecutive deliveries for a growing combo bonus. Reroute your hand once per shift, and collect stamps for special achievements.</li>
       </ul>
     </details>
-    <div class="foot">Prototype v0.1 · runs fully offline · desktop &amp; mobile</div>
+    <div class="foot">16 parcels per shift <span>•</span> Pick a card, then choose a shelf <span>•</span> Desktop &amp; mobile</div>
   </section>
 
   <!-- ================= GAME ================= -->
   <section id="screen-game" class="screen">
     <div id="hud">
-      <div class="chip grow"><small>SCORE</small><span id="hud-score">0</span></div>
-      <div class="chip"><small>DECK</small><span id="hud-deck">33</span></div>
-      <div class="chip"><small>🐭 CAUGHT</small><span id="hud-mice">0</span></div>
-      <button class="icobtn" id="btn-mute" title="Sound">🔊</button>
-      <button class="icobtn" id="btn-home" title="Menu">🏠</button>
+      <div class="game-brand"><span class="brand-mark">✦ POSTAL ARCADE</span><b>PARCEL <em>PANIC!</em></b></div>
+      <div class="hud-stats">
+        <div class="chip score"><small>SCORE</small><span id="hud-score">0</span></div>
+        <div class="chip"><small>DELIVERED</small><span id="hud-placed">0/16</span></div>
+        <div class="chip"><small>🐭 CAUGHT</small><span id="hud-mice">0</span></div>
+      </div>
+      <div class="hud-actions"><button class="icobtn" id="btn-mute" title="Sound" aria-label="Toggle sound">🔊</button><button class="icobtn" id="btn-home" title="Menu" aria-label="Main menu">⌂</button></div>
     </div>
-    <div id="goals"></div>
-    <div id="grid"></div>
-    <div id="hand"></div>
+    <div id="play-area">
+      <div class="board-panel">
+        <div class="panel-heading"><div><small>WAREHOUSE / 01</small><h2>SORTING FLOOR</h2></div><span id="shift-count">SHIFT 0 / 16</span></div>
+        <div id="grid" role="group" aria-label="Sorting grid"></div>
+        <div class="board-foot"><span id="combo-chip">4 × 4 shelves</span><span id="board-tip">Choose a parcel, then an open shelf.</span></div>
+      </div>
+      <aside class="side-panel">
+        <div class="goals-panel"><div class="side-title"><small>TODAY'S ROUTE</small><h2>MISSIONS <span>✦</span></h2></div><div id="goals"></div><div class="route-track"><span>SHIFT PROGRESS</span><div id="route-dots" aria-hidden="true"></div></div></div>
+        <div class="hand-panel"><div class="side-title"><small>READY TO DELIVER</small><h2>YOUR PARCELS <span id="hud-deck">33 LEFT</span></h2></div><div id="hand" role="group" aria-label="Parcel cards"></div><div class="hand-tools"><button type="button" id="btn-reroute" class="reroute-btn">↻ REROUTE HAND <span id="reroute-count">1 LEFT</span></button><p class="hand-help">Choose a card (keys 1–3) and an open shelf. Press R to reroute.</p></div></div>
+      </aside>
+    </div>
   </section>
 
   <!-- ================= END ================= -->
   <section id="screen-end" class="screen">
     <div id="end-box">
+      <div class="eyebrow">SHIFT COMPLETE / POSTAL ARCADE</div>
+      <h2>GOOD WORK!</h2>
       <div id="newbest">★ NEW BEST SCORE! ★</div>
       <div id="end-total">0</div>
       <div id="end-label">FINAL SCORE</div>
       <div id="end-rows"></div>
+      <button type="button" id="btn-end-stamps" class="end-stamps">✦ VIEW STAMP BOOK <span id="end-stamp-news"></span></button>
     </div>
-    <button class="btn" id="btn-again" style="margin-top:14px;">↺&nbsp; PLAY AGAIN</button>
-    <button class="btn ghost" id="btn-menu">🏠&nbsp; MAIN MENU</button>
+    <div class="end-actions"><button class="btn" id="btn-again">↺&nbsp; PLAY AGAIN</button><button class="btn ghost" id="btn-menu">🏠&nbsp; MAIN MENU</button></div>
   </section>
 
 </div>
 <div id="banner"></div>
+<dialog id="stamp-dialog"><div class="stamp-dialog-head"><div><small>POSTAL ARCADE / COLLECTION</small><h2>STAMP BOOK</h2></div><button type="button" id="btn-close-stamps" aria-label="Close stamp book">×</button></div><p>Earn stamps by trying different ways to sort the mail.</p><div id="stamp-list"></div></dialog>
 
 <script>
 'use strict';
@@ -239,11 +100,20 @@ const NAME = {box:'BOX', tube:'TUBE', env:'LETTER', sack:'SACK', crate:'CRATE', 
 const CORNER = {box:'#c8935a', tube:'#5b9bd5', env:'#e3b74f', sack:'#7fae5f', crate:'#d9834f', basket:'#a06cc9'};
 
 const GOAL_POOL = [
-  {id:'seal2',  ico:'🩹', text:'Seal 2 shelves',            target:2},
-  {id:'double', ico:'✨', text:'Score a Double Seal',        target:1},
-  {id:'patch2', ico:'✅', text:'Make 2 tape patches',        target:2},
-  {id:'mice2',  ico:'🐭', text:'Catch 2 mice',               target:2},
-  {id:'type6',  ico:'📮', text:'Deliver 6 of one type',      target:6},
+  {id:'seal1',   ico:'🩹', text:'Seal a shelf',              target:1},
+  {id:'patch1',  ico:'✅', text:'Make a tape patch',         target:1},
+  {id:'mice1',   ico:'🐭', text:'Catch a mouse',             target:1},
+  {id:'mice2',   ico:'🐭', text:'Catch 2 mice',             target:2},
+  {id:'type4',   ico:'📮', text:'Deliver 4 of one type',    target:4},
+  {id:'variety4',ico:'✨', text:'Deliver 4 parcel types',   target:4},
+  {id:'score20', ico:'★', text:'Reach 20 points',          target:20},
+];
+const STAMPS = [
+  {id:'first_seal', icon:'📦', name:'First Seal', hint:'Seal a shelf in one shift.'},
+  {id:'mice3', icon:'🐭', name:'Mouse Catcher', hint:'Catch 3 mice in one shift.'},
+  {id:'all_goals', icon:'🎯', name:'Full Route', hint:'Finish all 3 missions in one shift.'},
+  {id:'combo3', icon:'🔥', name:'Hot Streak', hint:'Score on 3 deliveries in a row.'},
+  {id:'century', icon:'★', name:'Century Shift', hint:'Finish a shift with 100 points.'},
 ];
 
 /* ============================== helpers ============================== */
@@ -252,6 +122,37 @@ const shuffle = a => { for(let i=a.length-1;i>0;i--){ const j=(Math.random()*(i+
 
 /* ============================== audio ============================== */
 let AC=null, muted = localStorage.getItem('pp_mute')==='1';
+let sdkReady=false, sdkMuted=false, adPlaying=false;
+let playedMs=0, activePlayStarted=0;
+function sdkGame(method,...args){
+  if(!sdkReady) return;
+  try{
+    const result=window.CrazyGames.SDK.game[method](...args);
+    if(result&&typeof result.catch==='function') result.catch(e=>console.warn('CrazyGames game event:',e));
+  }catch(e){ console.warn('CrazyGames game event:',e); }
+}
+async function initCrazyGames(){
+  try{
+    await window.CrazyGames.SDK.init();
+    if(window.CrazyGames.SDK.environment==='disabled') return;
+    sdkReady=true;
+    const game=window.CrazyGames.SDK.game;
+    const applySettings=settings=>{ sdkMuted=!!settings.muteAudio; paintMute(); };
+    applySettings(game.settings);
+    game.addSettingsChangeListener(applySettings);
+    if(S&&!S.over&&$('#screen-game').classList.contains('active')) sdkGame('gameplayStart');
+  }catch(e){ console.warn('CrazyGames SDK unavailable:',e); }
+}
+function requestShiftAd(){
+  if(!sdkReady||playedMs<180000) return;
+  try{
+    window.CrazyGames.SDK.ad.requestAd('midgame',{
+      adStarted:()=>{adPlaying=true;},
+      adFinished:()=>{adPlaying=false;},
+      adError:()=>{adPlaying=false;}
+    });
+  }catch(e){adPlaying=false;}
+}
 function ac(){ if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); return AC; }
 function note(ctx,t,f0,f1,dur,type,vol){
   const o=ctx.createOscillator(), g=ctx.createGain();
@@ -263,7 +164,7 @@ function note(ctx,t,f0,f1,dur,type,vol){
   o.connect(g).connect(ctx.destination); o.start(t); o.stop(t+dur+.02);
 }
 function sfx(name){
-  if(muted) return;
+  if(muted||sdkMuted||adPlaying) return;
   try{
     const ctx=ac(), t=ctx.currentTime;
     switch(name){
@@ -276,6 +177,8 @@ function sfx(name){
       case 'spawn':  note(ctx,t,700,1050,.12,'sawtooth',.08); break;
       case 'crunch': note(ctx,t,120,60,.07,'square',.22); note(ctx,t+.1,100,50,.07,'square',.2); break;
       case 'goal':   note(ctx,t,587,0,.1,'square',.13); note(ctx,t+.1,740,0,.1,'square',.13); note(ctx,t+.2,880,0,.2,'square',.14); break;
+      case 'reroute':note(ctx,t,330,520,.12,'triangle',.18); note(ctx,t+.1,440,680,.16,'triangle',.17); break;
+      case 'combo':  note(ctx,t,650,0,.09,'square',.1); note(ctx,t+.08,850,0,.14,'square',.12); break;
       case 'over':   note(ctx,t,523,0,.14,'square',.13); note(ctx,t+.14,659,0,.14,'square',.13); note(ctx,t+.28,784,0,.14,'square',.13); note(ctx,t+.42,1046,0,.3,'square',.15); break;
     }
   }catch(e){}
@@ -285,6 +188,9 @@ function sfx(name){
 const N=16, MICE_AT=[4,8,12];
 let S=null;
 let best = +(localStorage.getItem('pp_best')||0);
+let earnedStamps;
+try{ earnedStamps=new Set(JSON.parse(localStorage.getItem('pp_stamps')||'[]').filter(id=>STAMPS.some(s=>s.id===id))); }
+catch(e){ earnedStamps=new Set(); }
 
 function newGame(){
   S = {
@@ -294,6 +200,7 @@ function newGame(){
     placed:0, caughtMice:0, score:0,
     sealedRows:new Set(), sealedCols:new Set(), patched:new Set(),
     counts:{}, nSeals:0, nDoubles:0, nPatches:0, nGoals:0,
+    combo:0, bestCombo:0, comboBonus:0, reroutes:1,
     goals: shuffle(GOAL_POOL.slice()).slice(0,3).map(g=>({...g, done:false})),
     over:false,
   };
@@ -302,11 +209,20 @@ function newGame(){
 }
 
 function drawHand(){ while(S.hand.length<3 && S.deck.length) S.hand.push(S.deck.pop()); }
+function rerouteHand(){
+  if(!S||S.over||!S.reroutes||S.deck.length<3||!$('#screen-game').classList.contains('active')) return;
+  S.reroutes=0;
+  S.deck.unshift(...S.hand);
+  S.hand=[];
+  drawHand(); S.selected=0;
+  renderHand(); renderGrid(); updateHUD();
+  banner('📮 FRESH ROUTE!','gold'); sfx('reroute');
+}
 
 /* ============================== render ============================== */
 function cardHTML(t,handIdx){
-  return `<div class="card t-${t}${S.selected===handIdx?' sel':''}" data-hand="${handIdx}">
-    <div class="corner" style="background:${CORNER[t]}"></div>${SVG[t]}<span>${NAME[t]}</span></div>`;
+  return `<button type="button" class="card t-${t}${S.selected===handIdx?' sel':''}" data-hand="${handIdx}" aria-label="Card ${handIdx+1}: ${NAME[t]}${S.selected===handIdx?', selected':''}" aria-pressed="${S.selected===handIdx}">
+    <div class="corner" style="background:${CORNER[t]}"></div>${SVG[t]}<span>${NAME[t]}</span></button>`;
 }
 function renderHand(){
   let h='';
@@ -322,25 +238,47 @@ function isProtected(i){
   }
   return false;
 }
+function previewFor(i,type){
+  const r=(i/4)|0, c=i%4;
+  const cardAt=j=>j===i?type:S.grid[j].card;
+  const row=[0,1,2,3].map(k=>cardAt(r*4+k));
+  const col=[0,1,2,3].map(k=>cardAt(k*4+c));
+  const seal=(!S.sealedRows.has(r)&&row.every(Boolean)&&new Set(row).size===4)||
+    (!S.sealedCols.has(c)&&col.every(Boolean)&&new Set(col).size===4);
+  if(seal) return ['preview-seal','SEAL +10'];
+  for(const r0 of [r-1,r]) for(const c0 of [c-1,c]){
+    if(r0<0||c0<0||r0>2||c0>2||S.patched.has(r0+'_'+c0)) continue;
+    if([r0*4+c0,r0*4+c0+1,(r0+1)*4+c0,(r0+1)*4+c0+1].every(j=>cardAt(j)===type)) return ['preview-patch','PATCH +4'];
+  }
+  if(S.grid[i].mouse) return ['preview-mouse','CATCH +5'];
+  return ['',''];
+}
 function renderGrid(){
   let h='';
   for(let i=0;i<N;i++){
     const c=S.grid[i], r=(i/4)|0, col=i%4;
     let cls='cell';
-    const inRow=S.sealedRows.has(r), inCol=S.sealedCols.has(c);
+    const inRow=S.sealedRows.has(r), inCol=S.sealedCols.has(col);
     if(inRow||inCol) cls+=' in-seal';
     if(inRow) cls+=' tape-h';
     if(inCol) cls+=' tape-v';
     if(c.card) cls+=' has-card';
-    h+=`<div class="${cls}" data-idx="${i}">`;
+    const type=S.selected!==null?S.hand[S.selected]:null;
+    const [preview,label]=!c.card&&type?previewFor(i,type):['',''];
+    if(!c.card) cls+=' can-place'+(preview?' '+preview:'');
+    h+=`<button type="button" class="${cls}" data-idx="${i}" aria-label="Shelf ${r+1}, ${col+1}: ${c.card?NAME[c.card]:(c.mouse?(c.mouseAge>=2?'hungry mouse':'mouse'):'empty')+(label?', '+label:'')}">`;
     if(!c.card) h+=`<div class="slot"></div>`;
+    if(label) h+=`<span class="preview-label">${label}</span>`;
     if(c.card) h+=`<div class="parcel${c.justPlaced?' pop':''}">${SVG[c.card]}</div>`;
     for(const key of S.patched){
       const [r0,c0]=key.split('_').map(Number);
       if(r>=r0&&r<=r0+1&&col>=c0&&col<=c0+1){ h+=`<div class="patch-badge">✓</div>`; break; }
     }
-    if(c.mouse&&!c.card) h+=`<div class="mouse ${c.mouseAge>=2?'hungry':(c.mouseAge>=1?'wiggle':'')}">${SVG.mouse}</div>`;
-    h+=`</div>`;
+    if(c.mouse&&!c.card){
+      h+=`<div class="mouse ${c.mouseAge>=2?'hungry':(c.mouseAge>=1?'wiggle':'')}">${SVG.mouse}</div>`;
+      if(c.mouseAge>=2) h+=`<span class="mouse-warning" aria-hidden="true">!</span>`;
+    }
+    h+=`</button>`;
     c.justPlaced=false;
   }
   $('#grid').innerHTML=h;
@@ -348,23 +286,33 @@ function renderGrid(){
 function renderGoals(){
   $('#goals').innerHTML = S.goals.map(g=>{
     const p=Math.min(g.target, goalProgress(g));
-    return `<div class="goal${g.done?' done':''}"><span>${g.done?'✅':g.ico}</span><span>${g.text}</span><span class="g-prog">${g.done?'✓':p+'/'+g.target}</span></div>`;
+    return `<div class="goal${g.done?' done':''}"><span class="g-ico">${g.done?'✅':g.ico}</span><span>${g.text}</span><span class="g-prog">${g.done?'✓':p+'/'+g.target}</span></div>`;
   }).join('');
 }
 function goalProgress(g){
   switch(g.id){
-    case 'seal2':  return S.sealedRows.size+S.sealedCols.size;
-    case 'double': return S.nDoubles;
-    case 'patch2': return S.patched.size;
+    case 'seal1':  return S.sealedRows.size+S.sealedCols.size;
+    case 'patch1': return S.patched.size;
+    case 'mice1':  return S.caughtMice;
     case 'mice2':  return S.caughtMice;
-    case 'type6':  return Math.max(0,...Object.values(S.counts),0);
+    case 'type4':  return Math.max(0,...Object.values(S.counts));
+    case 'variety4': return Object.keys(S.counts).length;
+    case 'score20': return S.score;
   }
   return 0;
 }
 function updateHUD(){
   $('#hud-score').textContent=S.score;
-  $('#hud-deck').textContent=S.deck.length;
+  $('#hud-deck').textContent=S.deck.length+' LEFT';
+  $('#hud-placed').textContent=S.placed+'/16';
+  $('#shift-count').textContent='SHIFT '+S.placed+' / 16';
   $('#hud-mice').textContent=S.caughtMice;
+  $('#board-tip').textContent=S.over||S.placed>=N?'Shift complete!':S.hand.length?'Selected: '+NAME[S.hand[S.selected??0]]+'. Tap an open shelf.':'Choose a parcel to continue.';
+  $('#route-dots').innerHTML=Array.from({length:N},(_,i)=>`<i class="${i<S.placed?'done':''}"></i>`).join('');
+  $('#combo-chip').textContent=S.combo>=2?'🔥 COMBO ×'+S.combo:(S.combo===1?'🔥 SCORE AGAIN FOR +3':'4 × 4 shelves');
+  $('#combo-chip').classList.toggle('on',S.combo>0);
+  $('#reroute-count').textContent=S.reroutes?'1 LEFT':'USED';
+  $('#btn-reroute').disabled=!S.reroutes||S.deck.length<3||S.over;
 }
 
 /* ============================== fx ============================== */
@@ -383,6 +331,20 @@ function banner(text,cls){
   b.className='show'+(cls?' '+cls:'');
   clearTimeout(b._t);
   b._t=setTimeout(()=>b.className='',1300);
+}
+function celebrate(){
+  const layer=document.createElement('div');
+  layer.className='confetti-layer';
+  for(let i=0;i<32;i++){
+    const bit=document.createElement('i');
+    bit.style.setProperty('--x',(Math.random()*100)+'%');
+    bit.style.setProperty('--delay',(Math.random()*.55)+'s');
+    bit.style.setProperty('--dur',(1.3+Math.random()*.9)+'s');
+    bit.style.setProperty('--hue',([42,25,163,347][i%4]));
+    layer.appendChild(bit);
+  }
+  document.body.appendChild(layer);
+  setTimeout(()=>layer.remove(),2800);
 }
 
 /* ============================== gameplay ============================== */
@@ -418,7 +380,18 @@ function tryPlace(i){
   const colIdx=[0,1,2,3].map(k=>k*4+c);
   if(!S.sealedCols.has(c)&&colIdx.every(j=>S.grid[j].card)&&new Set(colIdx.map(j=>S.grid[j].card)).size===4){ S.sealedCols.add(c); gotCol=true; S.nSeals++; }
 
-  S.score+=gained+(gotRow?10:0)+(gotCol?10:0)+((gotRow&&gotCol)?10:0);
+  if(gotRow&&gotCol) S.nDoubles++;
+  const turnPoints=gained+(gotRow?10:0)+(gotCol?10:0)+((gotRow&&gotCol)?10:0);
+  S.score+=turnPoints;
+  if(turnPoints){
+    S.combo++;
+    S.bestCombo=Math.max(S.bestCombo,S.combo);
+    if(S.combo>=2){
+      const bonus=Math.min(9,(S.combo-1)*3);
+      S.score+=bonus; S.comboBonus+=bonus;
+      events.push({i,t:'+'+bonus+' COMBO!',c:'combo',s:'combo'});
+    }
+  }else S.combo=0;
 
   /* mice get hungry */
   for(let j=0;j<N;j++){
@@ -452,6 +425,8 @@ function tryPlace(i){
     }
   }
 
+  drawHand();
+  S.selected=S.hand.length?0:null;
   renderGrid();
   for(const e of events){ floatAt(e.i,e.t,e.c); if(e.s) sfx(e.s); }
 
@@ -459,8 +434,6 @@ function tryPlace(i){
   else if(gotRow||gotCol){ banner('🩹 SHELF SEALED! +10'); sfx('seal'); }
 
   checkGoals(events);
-  drawHand();
-  S.selected=S.hand.length?0:null;
   renderHand(); renderGoals(); updateHUD();
   sfx('pop');
 
@@ -468,37 +441,66 @@ function tryPlace(i){
 }
 
 function checkGoals(events){
-  for(const g of S.goals){
-    if(g.done) continue;
-    if(goalProgress(g)>=g.target){
-      g.done=true; S.nGoals++; S.score+=10;
-      banner('🎯 GOAL COMPLETE! +10','gold');
-      sfx('goal');
+  let awarded;
+  do{
+    awarded=false;
+    for(const g of S.goals){
+      if(g.done||goalProgress(g)<g.target) continue;
+      g.done=true; S.nGoals++; S.score+=10; awarded=true;
+      banner('🎯 GOAL COMPLETE! +10','gold'); sfx('goal');
+    }
+  }while(awarded);
+}
+
+function unlockStamps(total){
+  const won=[];
+  const checks={first_seal:S.nSeals>=1,mice3:S.caughtMice>=3,all_goals:S.nGoals>=3,combo3:S.bestCombo>=3,century:total>=100};
+  for(const stamp of STAMPS){
+    if(checks[stamp.id]&&!earnedStamps.has(stamp.id)){
+      earnedStamps.add(stamp.id); won.push(stamp);
     }
   }
+  if(won.length) localStorage.setItem('pp_stamps',JSON.stringify([...earnedStamps]));
+  return won;
 }
+function renderStampBook(){
+  $('#stamp-count').textContent=earnedStamps.size+'/'+STAMPS.length;
+  $('#stamp-list').innerHTML=STAMPS.map(stamp=>`<div class="stamp${earnedStamps.has(stamp.id)?' earned':' locked'}"><span class="stamp-icon">${earnedStamps.has(stamp.id)?stamp.icon:'?'}</span><span><b>${stamp.name}</b><small>${stamp.hint}</small></span><strong>${earnedStamps.has(stamp.id)?'EARNED':'LOCKED'}</strong></div>`).join('');
+}
+function openStampBook(){ renderStampBook(); $('#stamp-dialog').showModal(); }
 
 function endGame(){
   S.over=true;
+  updateHUD();
+  if(activePlayStarted){playedMs+=Date.now()-activePlayStarted;activePlayStarted=0;}
+  sdkGame('gameplayStop');
+  sdkGame('reportGameCompletedPercentage',100);
+  const game=S;
   setTimeout(()=>{
+    if(S!==game||!$('#screen-game').classList.contains('active')) return;
     const loose=S.grid.filter(c=>c.mouse&&!c.card).length;
     const total=S.score-5*loose;
     const isBest=total>best;
     if(isBest){ best=total; localStorage.setItem('pp_best',best); }
+    const newStamps=unlockStamps(total);
     $('#end-total').textContent=total;
     $('#newbest').style.display=isBest?'block':'none';
     const rows=[
       ['🩹 Shelves sealed', S.nSeals+' × 10', '+'+S.nSeals*10],
       ['✨ Double seals', S.nDoubles+' × 10', '+'+S.nDoubles*10],
       ['✅ Tape patches', S.nPatches+' × 4', '+'+S.nPatches*4],
+      ['🔥 Combo bonus', 'best ×'+S.bestCombo, '+'+S.comboBonus],
       ['🐭 Mice caught', S.caughtMice+' × 5', '+'+S.caughtMice*5],
       ['🎯 Goals completed', S.nGoals+' × 10', '+'+S.nGoals*10],
       ['🐭 Loose mice', loose+' × 5', '−'+loose*5, true],
       ['🏆 Best score', '', best],
     ];
     $('#end-rows').innerHTML=rows.map(r=>`<div class="row${r[0].startsWith('🏆')?' total':''}"><span>${r[0]} ${r[1]}</span><b class="${r[3]?'neg':''}">${r[2]}</b></div>`).join('');
+    $('#end-stamp-news').textContent=newStamps.length?'+'+newStamps.length+' NEW':'';
     showScreen('screen-end');
+    if((isBest&&total>=30)||newStamps.length){ sdkGame('happytime'); celebrate(); }
     sfx('over');
+    requestShiftAd();
   },900);
 }
 
@@ -509,18 +511,24 @@ function showScreen(id){
 }
 function startGame(){
   newGame();
+  activePlayStarted=Date.now();
   showScreen('screen-game');
   renderGrid(); renderHand(); renderGoals(); updateHUD();
+  sdkGame('gameplayStart');
 }
-function refreshBest(){ $('#best-title').textContent=best; }
+function refreshBest(){ $('#best-title').textContent=best; renderStampBook(); }
 
 $('#btn-play').addEventListener('click',()=>{ ac(); sfx('click'); startGame(); });
 $('#btn-again').addEventListener('click',()=>{ sfx('click'); startGame(); });
 $('#btn-menu').addEventListener('click',()=>{ sfx('click'); refreshBest(); showScreen('screen-title'); });
-$('#btn-home').addEventListener('click',()=>{ if(!S) return; S.over=true; refreshBest(); showScreen('screen-title'); });
+$('#btn-home').addEventListener('click',()=>{ if(!S) return; S.over=true; if(activePlayStarted){playedMs+=Date.now()-activePlayStarted;activePlayStarted=0;} sdkGame('gameplayStop'); refreshBest(); showScreen('screen-title'); });
+$('#btn-reroute').addEventListener('click',rerouteHand);
+$('#btn-stamps').addEventListener('click',openStampBook);
+$('#btn-end-stamps').addEventListener('click',openStampBook);
+$('#btn-close-stamps').addEventListener('click',()=>$('#stamp-dialog').close());
 const muteBtn=$('#btn-mute');
-function paintMute(){ muteBtn.textContent=muted?'🔇':'🔊'; }
-muteBtn.addEventListener('click',()=>{ muted=!muted; localStorage.setItem('pp_mute',muted?'1':'0'); paintMute(); if(!muted) sfx('click'); });
+function paintMute(){ muteBtn.textContent=(muted||sdkMuted)?'🔇':'🔊'; muteBtn.disabled=sdkMuted; muteBtn.title=sdkMuted?'Sound disabled by CrazyGames':'Sound'; }
+muteBtn.addEventListener('click',()=>{ if(sdkMuted) return; muted=!muted; localStorage.setItem('pp_mute',muted?'1':'0'); paintMute(); if(!muted) sfx('click'); });
 paintMute();
 
 $('#grid').addEventListener('click',e=>{
@@ -532,8 +540,16 @@ $('#hand').addEventListener('click',e=>{
   const card=e.target.closest('.card');
   if(!card||card.classList.contains('empty')||!S||S.over) return;
   S.selected=+card.dataset.hand;
-  renderHand();
+  renderHand(); renderGrid(); updateHUD();
   sfx('click');
+});
+document.addEventListener('keydown',e=>{
+  if(!S||S.over||!$('#screen-game').classList.contains('active')) return;
+  if(e.key.toLowerCase()==='r'){ rerouteHand(); return; }
+  const n=Number(e.key);
+  if(n>=1&&n<=3&&S.hand[n-1]){
+    S.selected=n-1; renderHand(); renderGrid(); updateHUD(); sfx('click');
+  }
 });
 
 /* title floaters */
@@ -552,7 +568,11 @@ $('#hand').addEventListener('click',e=>{
   refreshBest();
 })();
 
-/* TODO: CrazyGames SDK v3 — init on load, adBreak before game start & on game over, happytime() on seals/goals */
+const sdkScript=document.createElement('script');
+sdkScript.src='https://sdk.crazygames.com/crazygames-sdk-v3.js';
+sdkScript.async=true;
+sdkScript.onload=initCrazyGames;
+document.head.appendChild(sdkScript);
 </script>
 </body>
 </html>

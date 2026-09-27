@@ -1,48 +1,34 @@
 # Parcel Panic! 📦🐭
 
-**The cozy mail warehouse puzzle.** Sort parcels onto the shelves, seal full rows with tape, patch together matching crates — and watch out for the mice that chew your parcels!
+A quick postal warehouse puzzle for desktop and mobile. Pick a parcel card, place it on an open shelf, seal rows and columns with four different parcel types, make matching 2×2 patches, and catch mice before they chew the delivery.
 
-An original HTML5 casual puzzle prototype, built as a single self-contained file with zero dependencies. Desktop & mobile (mouse + touch), fully offline-capable.
+## Play locally
 
-| | |
-|---|---|
-| ![Title screen](docs/screenshot-title.png) | ![Gameplay](docs/screenshot-gameplay.png) |
-| ![End screen](docs/screenshot-end.png) | ![Mobile](docs/screenshot-mobile.png) |
+Open `index.html` in a browser, or serve this folder with a local web server and visit `http://localhost:8765/`. No build step or package install is needed. The game remains playable if the CrazyGames SDK cannot load.
 
-## Run it
+## Controls and scoring
 
-No build, no install:
+- Tap or click a card, then an empty shelf. On desktop, keys `1`, `2`, and `3` select cards.
+- Use **Reroute Hand** once per shift to trade all three cards for fresh ones. On desktop, press `R`.
+- A row or column of four different parcels seals for **10 points**. Completing both at once adds another **10 points**.
+- A 2×2 block of one parcel type makes a patch for **4 points**.
+- Placing a parcel on a mouse catches it for **5 points**. Uncaught mice cost **5 points** at the end; hungry mice can chew unprotected parcels.
+- Three short missions are drawn each shift, worth **10 points** each. A shift ends after **16 deliveries**. Your best score is saved in the browser.
+- Scoring on consecutive deliveries builds a combo: **+3**, then **+6**, up to **+9** per turn. Five collectible stamps reward different achievements and stay unlocked in the browser.
 
-- **Just open** `parcel-panic.html` in any modern browser, or
-- serve the folder (`python -m http.server`, `npx http-server`, anything) and open the page.
+## CrazyGames upload
 
-## How to play
+The upload archive is `crazygames-upload.zip`. Its root contains `index.html` and `styles.css`; upload it as an HTML5 game. The v3 SDK initializes on CrazyGames and localhost, with gameplay start/stop, audio settings, game completion, high-score celebration, and a midgame ad request at a completed shift after at least three minutes of play. The game runs normally when the SDK is unavailable or ads are not filled.
 
-A shift lasts **16 delivered parcels**. On each turn, tap a parcel card in your hand, then tap a shelf slot.
+The game has an English interface and adapts to desktop and mobile sizes, including the small 907 × 510 desktop frame. Before submission, write the portal description, review the game's name for trademark conflicts, and playtest the balance with other players. CrazyGames decides whether a submission is accepted.
 
-- 🩹 **Seal a shelf** — fill a full row or column with **4 different** parcels: **+10**
-- ✅ **Tape patch** — a 2×2 block of one parcel type: **+4**
-- 🐭 **Catch a mouse** — deliver a parcel onto it: **+5**
-- ✨ **Double seal** — a single parcel completes both a row and a column: **+10** bonus
-- 🎯 **Goals** — 3 goal cards per shift, **+10** each
-- 🐭 **Loose mice** — any mouse left uncaught at the end: **−5**. A mouse left alone for 3 turns gets hungry and **chews a neighbouring parcel** (sealed shelves and patches are safe)
+Listing artwork is in `marketing/`: landscape (1920 × 1080), portrait (800 × 1200), and square (800 × 800) PNG covers, plus silent 15-second landscape (1920 × 1080) and portrait (1080 × 1620) MP4 previews. Upload these separately from the game ZIP. The previews are animated illustrations of the game's mechanics; capture live gameplay as well if the portal asks for footage. A draft English description and instructions are in `marketing/listing.md`.
 
-Chase the high score — it is saved locally.
+## Files
 
-## Tech notes
+- `index.html` — gameplay, vector parcel art, sound effects, and SDK integration
+- `styles.css` — responsive interface and animations
+- `docs/` — screenshots of the original prototype, kept for reference
+- `marketing/` — cover images, preview videos, and the scripts used to create them
 
-- Single `parcel-panic.html` file (~30 KB): vanilla JS + hand-drawn inline SVG art
-- WebAudio-synthesised sound effects, no audio assets
-- No network requests, no external fonts/libraries/trackers
-- Responsive layout, tested down to 390 px width
-
-## Roadmap
-
-- [ ] CrazyGames SDK v3 integration (ads, happytime events)
-- [ ] Final name / trademark check before portal submission
-- [ ] Polish: confetti on new best, settings screen, more goal variety
-- [ ] Balance tuning based on playtest scores
-
-## License
-
-All rights reserved by the repository owner (game is being prepared for portal distribution).
+All rights reserved by the repository owner.
