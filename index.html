@@ -124,6 +124,17 @@ const shuffle = a => { for(let i=a.length-1;i>0;i--){ const j=(Math.random()*(i+
 let AC=null, muted = localStorage.getItem('pp_mute')==='1';
 let sdkReady=false, sdkMuted=false, adPlaying=false;
 let playedMs=0, activePlayStarted=0;
+let progressStore=localStorage;
+function loadProgress(){
+  best=+(progressStore.getItem('pp_best')||0);
+  try{ earnedStamps=new Set(JSON.parse(progressStore.getItem('pp_stamps')||'[]').filter(id=>STAMPS.some(s=>s.id===id))); }
+  catch(e){ earnedStamps=new Set(); }
+  refreshBest();
+}
+function saveProgress(key,value){
+  try{ progressStore.setItem(key,value); }
+  catch(e){ console.warn('Could not save progress:',e); }
+}
 function sdkGame(method,...args){
   if(!sdkReady) return;
   try{
@@ -136,6 +147,10 @@ async function initCrazyGames(){
     await window.CrazyGames.SDK.init();
     if(window.CrazyGames.SDK.environment==='disabled') return;
     sdkReady=true;
+    try{
+      progressStore=window.CrazyGames.SDK.data;
+      loadProgress();
+    }catch(e){ progressStore=localStorage; loadProgress(); console.warn('CrazyGames progress unavailable:',e); }
     const game=window.CrazyGames.SDK.game;
     const applySettings=settings=>{ sdkMuted=!!settings.muteAudio; paintMute(); };
     applySettings(game.settings);
@@ -187,10 +202,7 @@ function sfx(name){
 /* ============================== state ============================== */
 const N=16, MICE_AT=[4,8,12];
 let S=null;
-let best = +(localStorage.getItem('pp_best')||0);
-let earnedStamps;
-try{ earnedStamps=new Set(JSON.parse(localStorage.getItem('pp_stamps')||'[]').filter(id=>STAMPS.some(s=>s.id===id))); }
-catch(e){ earnedStamps=new Set(); }
+let best=0, earnedStamps=new Set();
 
 function newGame(){
   S = {
@@ -460,7 +472,7 @@ function unlockStamps(total){
       earnedStamps.add(stamp.id); won.push(stamp);
     }
   }
-  if(won.length) localStorage.setItem('pp_stamps',JSON.stringify([...earnedStamps]));
+  if(won.length) saveProgress('pp_stamps',JSON.stringify([...earnedStamps]));
   return won;
 }
 function renderStampBook(){
@@ -481,7 +493,7 @@ function endGame(){
     const loose=S.grid.filter(c=>c.mouse&&!c.card).length;
     const total=S.score-5*loose;
     const isBest=total>best;
-    if(isBest){ best=total; localStorage.setItem('pp_best',best); }
+    if(isBest){ best=total; saveProgress('pp_best',best); }
     const newStamps=unlockStamps(total);
     $('#end-total').textContent=total;
     $('#newbest').style.display=isBest?'block':'none';
@@ -565,7 +577,7 @@ document.addEventListener('keydown',e=>{
     d.innerHTML=SVG[items[k]];
     f.appendChild(d);
   }
-  refreshBest();
+  loadProgress();
 })();
 
 const sdkScript=document.createElement('script');

@@ -13,14 +13,14 @@ Open `index.html` in a browser, or serve this folder with a local web server and
 - A row or column of four different parcels seals for **10 points**. Completing both at once adds another **10 points**.
 - A 2×2 block of one parcel type makes a patch for **4 points**.
 - Placing a parcel on a mouse catches it for **5 points**. Uncaught mice cost **5 points** at the end; hungry mice can chew unprotected parcels.
-- Three short missions are drawn each shift, worth **10 points** each. A shift ends after **16 deliveries**. Your best score is saved in the browser.
-- Scoring on consecutive deliveries builds a combo: **+3**, then **+6**, up to **+9** per turn. Five collectible stamps reward different achievements and stay unlocked in the browser.
+- Three short missions are drawn each shift, worth **10 points** each. A shift ends after **16 deliveries**. Your best score is saved.
+- Scoring on consecutive deliveries builds a combo: **+3**, then **+6**, up to **+9** per turn. Five collectible stamps reward different achievements and stay unlocked between visits.
 
 ## CrazyGames upload
 
-The upload archive is `crazygames-upload.zip`. Its root contains `index.html` and `styles.css`; upload it as an HTML5 game. The v3 SDK initializes on CrazyGames and localhost, with gameplay start/stop, audio settings, game completion, high-score celebration, and a midgame ad request at a completed shift after at least three minutes of play. The game runs normally when the SDK is unavailable or ads are not filled.
+Upload `index.html` and `styles.css` together as the HTML5 game files in the CrazyGames Developer Portal. The separate `crazygames-upload.zip` archive is kept for platforms that request a ZIP. The v3 SDK initializes on CrazyGames and localhost, with gameplay start/stop, audio settings, game completion, high-score celebration, cloud-backed best score and stamps through the Data module, and a midgame ad request at a completed shift after at least three minutes of play. Select **Yes, using the Data Module from the CrazyGames SDK** for progress save in the submission form. The game runs normally when the SDK is unavailable or ads are not filled.
 
-The game has an English interface and adapts to desktop and mobile sizes, including the small 907 × 510 desktop frame. Before submission, write the portal description, review the game's name for trademark conflicts, and playtest the balance with other players. CrazyGames decides whether a submission is accepted.
+The game has an English interface and adapts to desktop and mobile sizes, including the small 907 × 510 desktop frame. The English portal description and controls are in `marketing/listing.md`. Review the game's name for trademark conflicts and playtest the balance with other players. CrazyGames decides whether a submission is accepted.
 
 Listing artwork is in `marketing/`: landscape (1920 × 1080), portrait (800 × 1200), and square (800 × 800) PNG covers, plus silent 15-second landscape (1920 × 1080) and portrait (1080 × 1620) MP4 previews. Upload these separately from the game ZIP. The previews are animated illustrations of the game's mechanics; capture live gameplay as well if the portal asks for footage. A draft English description and instructions are in `marketing/listing.md`.
 
