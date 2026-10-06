@@ -1,4 +1,4 @@
-# Parcel Panic! 📦🐭
+# Mouseproof Mailroom 📦🐭
 
 A quick postal warehouse puzzle for desktop and mobile. Pick a parcel card, place it on an open shelf, seal rows and columns with four different parcel types, make matching 2×2 patches, and catch mice before they chew the delivery. Your first shift starts with three parcels already sorted, so one move teaches the main scoring rule.
 

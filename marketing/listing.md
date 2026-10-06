@@ -1,6 +1,6 @@
 # CrazyGames listing draft
 
-**Working title:** Parcel Panic!
+**Title:** Mouseproof Mailroom
 
 **Short description:** Sort parcels onto a busy mailroom shelf. Clear the 70-point route by sealing lines, catching mice, and building scoring combos.
 
@@ -10,4 +10,4 @@
 
 **Suggested categories:** Puzzle, Casual, Strategy
 
-**Submission note:** The working title is used by other games. Decide on a distinctive final name before public launch and update the game, covers, videos, and this listing together.
+**Resubmission note:** Previously submitted as Parcel Panic! The updated version adds a playable first-shift introduction, contextual tips, visible scoring opportunities, a 70-point route target, delivery points, and a compact interface for small game windows.

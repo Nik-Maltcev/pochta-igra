@@ -70,13 +70,14 @@ class Scene:
         d = ImageDraw.Draw(img)
         w, h = self.w, self.h
         # Header
-        text(d, (50, 38), "PARCEL PANIC!", 37 if self.portrait else 45, CREAM)
+        text(d, (50, 38), "MOUSEPROOF MAILROOM", 37 if self.portrait else 45, CREAM)
         stat_x = w - (420 if self.portrait else 575)
         rr(d, (stat_x, 28, stat_x+200, 112), 14, GOLD)
         rr(d, (stat_x+214, 28, stat_x+410, 112), 14, "#31545a")
-        score = (10 if t >= 5 else 0) + (5 if t >= 7 else 0) + (4 if t >= 11 else 0)
         placed = sum(t >= event_t for event_t, _, _ in EVENTS)
-        text(d, (stat_x+18, 37), "SCORE", 19, NAVY)
+        # Include delivery points, completed missions and the second bonus move's combo.
+        score = placed + (20 if t >= 5 else 0) + (18 if t >= 7 else 0) + (14 if t >= 11 else 0)
+        text(d, (stat_x+18, 37), "SCORE / 70", 19, NAVY)
         text(d, (stat_x+18, 64), str(score), 35, NAVY)
         text(d, (stat_x+230, 37), "DELIVERED", 17, CREAM)
         text(d, (stat_x+230, 65), f"{placed}/16", 34, CREAM)

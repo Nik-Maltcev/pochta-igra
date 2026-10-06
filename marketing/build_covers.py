@@ -45,6 +45,12 @@ def parcel(kind, size):
         d.line((206, 35, 290, 111, 343, 187, 344, 282, 295, 347, 125, 347, 76, 282, 77, 187, 130, 111, 206, 35), fill="#477640", width=13, joint="curve")
         d.arc((127, 117, 295, 204), 10, 170, fill="#477640", width=13)
         d.rounded_rectangle((158, 247, 263, 309), 10, fill="#eff2d8", outline="#477640", width=8)
+    elif kind == "basket":
+        d.arc((92, 95, 328, 230), 180, 360, fill="#6f4595", width=23)
+        d.polygon(((66, 171), (354, 171), (326, 345), (300, 364), (120, 364), (94, 345)), fill="#a06cc9")
+        d.line((66, 171, 354, 171, 326, 345, 300, 364, 120, 364, 94, 345, 66, 171), fill="#6f4595", width=20, joint="curve")
+        for yy, left, right in ((217, 131, 289), (269, 141, 279), (321, 151, 269)):
+            d.line((left, yy, right, yy), fill="#c9a6e8", width=16)
     elif kind == "mouse":
         d.arc((18, 242, 163, 391), 40, 260, fill="#adb2b6", width=20)
         d.ellipse((77, 170, 321, 335), fill="#a8afb7", outline="#54626c", width=12)
@@ -85,10 +91,15 @@ def base_canvas(w, h):
     return canvas
 
 
-def title(draw, x, y, size):
+def title(draw, x, y, size, max_width):
+    lines = ("MOUSEPROOF", "MAILROOM")
     f = font(size)
+    widest = max(draw.textbbox((0, 0), line, font=f)[2] for line in lines)
+    if widest > max_width:
+        size = int(size * max_width / widest)
+        f = font(size)
     gap = int(size * .91)
-    for line, color, yy in (("PARCEL", CREAM, y), ("PANIC!", GOLD, y + gap)):
+    for line, color, yy in ((lines[0], CREAM, y), (lines[1], GOLD, y + gap)):
         draw.text((x + 6, yy + 10), line, font=f, fill=(9, 26, 32), stroke_width=0)
         draw.text((x, yy), line, font=f, fill=color, stroke_width=max(1, size // 160), stroke_fill=color)
 
@@ -97,15 +108,15 @@ def cover(name, w, h):
     img = base_canvas(w, h)
     d = ImageDraw.Draw(img)
     if w > h * 1.3:
-        title(d, int(w * .045), int(h * .23), int(h * .17))
+        title(d, int(w * .045), int(h * .23), int(h * .17), int(w * .46))
         cx, cy, r = w * .72, h * .51, h * .35
         items = [("box", .65, .41, .34, -10), ("envelope", .87, .55, .30, 8), ("tube", .78, .23, .23, 15), ("sack", .58, .71, .23, -14), ("mouse", .9, .78, .17, 0)]
     elif h > w * 1.3:
-        title(d, int(w * .075), int(h * .08), int(w * .19))
+        title(d, int(w * .075), int(h * .08), int(w * .19), int(w * .85))
         cx, cy, r = w * .51, h * .62, w * .43
         items = [("box", .28, .51, .54, -11), ("envelope", .70, .57, .43, 8), ("tube", .73, .39, .32, 15), ("sack", .30, .77, .33, -12), ("mouse", .75, .78, .30, 5)]
     else:
-        title(d, int(w * .07), int(h * .065), int(w * .165))
+        title(d, int(w * .07), int(h * .065), int(w * .165), int(w * .86))
         cx, cy, r = w * .53, h * .66, w * .40
         items = [("box", .29, .55, .43, -10), ("envelope", .73, .64, .39, 8), ("tube", .72, .43, .29, 15), ("sack", .34, .81, .27, -12), ("mouse", .79, .83, .23, 3)]
     d = ImageDraw.Draw(img)
